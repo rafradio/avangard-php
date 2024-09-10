@@ -40,7 +40,7 @@ function random_strings($length_of_string) {
         if (in_array($str_result, $UrlArrs)) {
             $str_result = substr(str_shuffle($str_first), 0, $length_of_string);
         } else {
-            $q = "INSERT INTO efes._materiallinks (material) VALUES ('" . "$str_result" . "');";
+            $q = "INSERT INTO mydb.materiallinks (material) VALUES ('" . "$str_result" . "');";
             $result_qaz = $conn->query($q);
             $flag = false;
         }
