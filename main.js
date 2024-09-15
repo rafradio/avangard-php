@@ -25,6 +25,7 @@ const makeRequest = async (url) => {
         console.log("url result = ", data.data);
         document.getElementById("UResult").value = data.data;
         document.getElementById("Uname").value = "";
+        console.log(data);
     }
     catch(error) {
         console.log(error.message);
