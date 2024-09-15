@@ -1,5 +1,7 @@
 <?php
 function createURL($url) {
+    
+    // Записываем в корневой каталог php файл с перенаправлением
     $path = dirname(__FILE__);
     $rndStr = random_strings(8);
     $fullPath = $path . "/" . $rndStr . ".php";
@@ -8,13 +10,23 @@ function createURL($url) {
     $txt = "<?php\n";
     $txt .= 'header("Location: ' . $url . '");';
     $txt .= "\n";
-    $actual_link = "https://$_SERVER[HTTP_HOST]";
-    $actual_link .= "/AvangardPHP/" . $nameOfFile;
     fwrite($myfile, $txt);
     fclose($myfile);
+    
+    // формируем url данного файла
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') { $link = "https";}
+    else {$link = "http";}
+    $link .= "://";
+    $link .= $_SERVER['HTTP_HOST'];
+    $checkPath = explode('/',$_SERVER['REQUEST_URI']);
+    if (count($checkPath)> 2) { $actual_link = $link . "/" . $checkPath[1] . "/" . $nameOfFile;}
+    else {$actual_link = $link . "/" . $nameOfFile;}
+    
     return $actual_link;
+    
 }
 
+// формируем уникальную адрес и проверяем отсутсвие его повтора
 function random_strings($length_of_string) {
     $input = fopen("config.txt", "r");
     while(!feof($input)) {
@@ -27,7 +39,7 @@ function random_strings($length_of_string) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     $conn->set_charset('utf8');
     $UrlArrs = array();
-    $q = "SELECT material FROM mydb.materiallinks";
+    $q = "SELECT material FROM materiallinks";
     $result_qaz = $conn->query($q);
     while($row_in = $result_qaz->fetch_assoc()) {
         $UrlArrs[] = $row_in;
@@ -40,11 +52,12 @@ function random_strings($length_of_string) {
         if (in_array($str_result, $UrlArrs)) {
             $str_result = substr(str_shuffle($str_first), 0, $length_of_string);
         } else {
-            $q = "INSERT INTO mydb.materiallinks (material) VALUES ('" . "$str_result" . "');";
+            $q = "INSERT INTO materiallinks (material) VALUES ('" . "$str_result" . "');";
             $result_qaz = $conn->query($q);
             $flag = false;
         }
     }
     return $str_result;
+    
 }
 
